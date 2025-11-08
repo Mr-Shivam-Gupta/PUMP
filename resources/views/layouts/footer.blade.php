@@ -159,7 +159,7 @@
                             <input id="customizer-theme01" name="data-theme" type="radio" value="default"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme01">
-                                <img src="../../assets/images/demo/default.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/default.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -170,7 +170,8 @@
                             <input id="customizer-theme02" name="data-theme" type="radio" value="saas"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme02">
-                                <img src="../../assets/images/demo/saas.png') }}" alt="" class="img-fluid">
+                                <img src="{{ asset('assets/images/demos/saas.png') }}" alt=""
+                                    class="img-fluid">
                             </label>
                         </div>
                         <h5 class="fs-13 text-center fw-medium mt-2">Sass</h5>
@@ -180,7 +181,7 @@
                             <input id="customizer-theme03" name="data-theme" type="radio" value="corporate"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme03">
-                                <img src="../../assets/images/demo/corporate.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/corporate.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -191,7 +192,8 @@
                             <input id="customizer-theme04" name="data-theme" type="radio" value="galaxy"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme04">
-                                <img src="../../assets/images/demo/galaxy.png') }}" alt="" class="img-fluid">
+                                <img src="{{ asset('assets/images/demos/galaxy.png') }}" alt=""
+                                    class="img-fluid">
                             </label>
                         </div>
                         <h5 class="fs-13 text-center fw-medium mt-2">Galaxy</h5>
@@ -201,7 +203,7 @@
                             <input id="customizer-theme05" name="data-theme" type="radio" value="material"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme05">
-                                <img src="../../assets/images/demo/material.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/material.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -212,7 +214,7 @@
                             <input id="customizer-theme06" name="data-theme" type="radio" value="creative"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme06">
-                                <img src="../../assets/images/demo/creative.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/creative.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -223,7 +225,7 @@
                             <input id="customizer-theme07" name="data-theme" type="radio" value="minimal"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme07">
-                                <img src="../../assets/images/demo/minimal.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/minimal.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -234,7 +236,8 @@
                             <input id="customizer-theme08" name="data-theme" type="radio" value="modern"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme08">
-                                <img src="../../assets/images/demo/modern.png') }}" alt="" class="img-fluid">
+                                <img src="{{ asset('assets/images/demos/modern.png') }}" alt=""
+                                    class="img-fluid">
                             </label>
                         </div>
                         <h5 class="fs-13 text-center fw-medium mt-2">Modern</h5>
@@ -245,7 +248,7 @@
                             <input id="customizer-theme09" name="data-theme" type="radio" value="interactive"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme09">
-                                <img src="../../assets/images/demo/interactive.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/interactive.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -257,7 +260,7 @@
                             <input id="customizer-theme10" name="data-theme" type="radio" value="classic"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme10">
-                                <img src="../../assets/images/demo/classic.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/classic.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -269,7 +272,7 @@
                             <input id="customizer-theme11" name="data-theme" type="radio" value="vintage"
                                 class="form-check-input">
                             <label class="form-check-label p-0" for="customizer-theme11">
-                                <img src="../../assets/images/demo/vintage.png') }}" alt=""
+                                <img src="{{ asset('assets/images/demos/vintage.png') }}" alt=""
                                     class="img-fluid">
                             </label>
                         </div>
@@ -1059,7 +1062,7 @@
         </div>
     </div>
 </div>
-
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="{{ asset('assets/libs/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
 <script src="{{ asset('assets/libs/simplebar/simplebar.min.js') }}"></script>
 <script src="{{ asset('assets/libs/node-waves/waves.min.js') }}"></script>
@@ -1070,8 +1073,24 @@
 <script src="{{ asset('assets/libs/jsvectormap/jsvectormap.min.js') }}"></script>
 <script src="{{ asset('assets/libs/jsvectormap/maps/world-merc.js') }}"></script>
 <script src="{{ asset('assets/libs/swiper/swiper-bundle.min.js') }}"></script>
+<script src="{{ asset('assets/libs/choices.js/public/assets/scripts/choices.min.js') }}"></script>
+
 <script src="{{ asset('assets/js/pages/dashboard-ecommerce.init.js') }}"></script>
+<script src="{{ asset('custom/js/main.js') }}"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.datatables.net/responsive/2.2.9/js/dataTables.responsive.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/dataTables.buttons.min.js"></script>
+<script src="https://cdn.datatables.net/fixedcolumns/4.3.0/js/dataTables.fixedColumns.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.print.min.js"></script>
+<script src="https://cdn.datatables.net/buttons/2.2.2/js/buttons.html5.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js"></script>
 <script src="{{ asset('assets/js/app.js') }}"></script>
+
 @stack('scripts')
 </body>
 

@@ -28,6 +28,23 @@ class TenantSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+            [
+                'name' => 'Tenant 2',
+                'slug' => 'tenant 2',
+                'domain' => 'tenant.yourdomain.com',
+                'contact' => '9999999998',
+                'email' => 'tenant@gmail.com',
+                'password' => Hash::make('12345678'),
+                'type' => 'subscription',
+                'plan' => 'Starter Plan',
+                'isolation' => 'shared_schema',
+                'database' => null,
+                'db_username' => null,
+                'db_password' => null,
+                'status' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
         ]);
     }
 }
