@@ -150,7 +150,7 @@ $(document).ready(function () {
     $(document).on("click", ".toggle-status", function () {
         const id = $(this).data("id");
         $.ajax({
-            url: makeUrl(`super-admin/tenant/status/${id}`),
+            url: makeUrl(`super-admin/tenants/status/${id}`),
             type: "GET",
             success: function (response) {
                 if (response.success) {

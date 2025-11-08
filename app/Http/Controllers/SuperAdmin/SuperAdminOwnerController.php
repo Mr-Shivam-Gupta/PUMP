@@ -43,7 +43,7 @@ class SuperAdminOwnerController extends Controller
         $validator = Validator::make($request->all(), [
             'owner_id' => 'required|string|max:255|unique:owners,owner_id',
             'owner_password' => 'required|string|min:6',
-            'own_tenant_ids' => 'nullable|array|min:2',
+            'own_tenant_ids' => 'nullable|array|min:1',
             'own_tenant_ids.*' => 'integer|exists:tenants,id',
             'status' => 'required|boolean',
         ]);
@@ -56,6 +56,29 @@ class SuperAdminOwnerController extends Controller
         }
 
         $data = $validator->validated();
+
+        // Ensure no tenant in own_tenant_ids is already assigned to another owner
+        if (!empty($data['own_tenant_ids']) && is_array($data['own_tenant_ids'])) {
+            $conflicts = [];
+            foreach ($data['own_tenant_ids'] as $tenantId) {
+                $existing = Owner::whereJsonContains('own_tenant_ids', $tenantId)->first();
+                if ($existing) {
+                    $conflicts[] = $tenantId;
+                }
+            }
+
+            if (!empty($conflicts)) {
+                // Try to get tenant names for a clearer message
+                $tenantNames = Tenant::whereIn('id', $conflicts)->pluck('name')->toArray();
+                $label = !empty($tenantNames) ? implode(', ', $tenantNames) : implode(', ', $conflicts);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Cannot assign tenant(s) [{$label}] because they are already assigned to another owner.",
+                ], 422);
+            }
+        }
+
         $data['owner_password'] = Hash::make($data['owner_password']);
 
         $owner = Owner::create($data);
@@ -118,6 +141,29 @@ class SuperAdminOwnerController extends Controller
         }
 
         $data = $validator->validated();
+
+        // Ensure no tenant in own_tenant_ids is already assigned to another owner (exclude this owner)
+        if (!empty($data['own_tenant_ids']) && is_array($data['own_tenant_ids'])) {
+            $conflicts = [];
+            foreach ($data['own_tenant_ids'] as $tenantId) {
+                $existing = Owner::where('id', '!=', $owner->id)
+                    ->whereJsonContains('own_tenant_ids', $tenantId)
+                    ->first();
+                if ($existing) {
+                    $conflicts[] = $tenantId;
+                }
+            }
+
+            if (!empty($conflicts)) {
+                $tenantNames = Tenant::whereIn('id', $conflicts)->pluck('name')->toArray();
+                $label = !empty($tenantNames) ? implode(', ', $tenantNames) : implode(', ', $conflicts);
+
+                return response()->json([
+                    'success' => false,
+                    'message' => "Cannot assign tenant(s) [{$label}] because they are already assigned to another owner.",
+                ], 422);
+            }
+        }
 
         // If password is provided, hash it
         if (!empty($data['owner_password'])) {

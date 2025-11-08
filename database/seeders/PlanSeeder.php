@@ -32,7 +32,7 @@ class PlanSeeder extends Seeder
             [
                 'name' => 'Enterprise Plan',
                 'duration_days' => 365,
-                'isolation' => 'shared_schema',
+                'isolation' => 'separate_db',
                 'max_users' => 500,
                 'price' => 9999.00,
                 'created_at' => now(),

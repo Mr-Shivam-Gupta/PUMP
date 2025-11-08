@@ -56,8 +56,63 @@ class SuperAdminTenantController extends Controller
 
         return response()->json($tenants);
     }
-    public function index()
+    public function index(Request $request)
     {
+        // If this is an AJAX request from DataTables (or expects JSON),
+        // return server-side paginated/search results in DataTables format.
+        if ($request->ajax() || $request->wantsJson()) {
+            dd('here');
+            $query = Tenant::query();
+
+            // DataTables sends search value as search[value]
+            $searchValue = $request->input('search.value') ?? $request->input('search');
+            if (!empty($searchValue)) {
+                $query->where(function ($q) use ($searchValue) {
+                    $q->where('name', 'like', "%{$searchValue}%")
+                        ->orWhere('email', 'like', "%{$searchValue}%")
+                        ->orWhere('domain', 'like', "%{$searchValue}%")
+                        ->orWhere('contact', 'like', "%{$searchValue}%");
+                });
+            }
+
+            $recordsTotal = Tenant::count();
+            $recordsFiltered = $query->count();
+
+            // DataTables paging params
+            $start = (int) $request->input('start', 0);
+            $length = (int) $request->input('length', 10);
+            if ($length <= 0) {
+                $length = 10;
+            }
+
+            // apply ordering if provided (simple fallback to created_at desc)
+            $orderColumnIndex = $request->input('order.0.column');
+            $orderDir = $request->input('order.0.dir', 'desc');
+            if ($orderColumnIndex !== null) {
+                // map column index to actual column names if you use columns[] in DataTables init
+                // fallback to created_at
+                $orderColumn = $request->input("columns.{$orderColumnIndex}.data") ?? 'created_at';
+                // safety: allow only specific columns
+                $allowed = ['id', 'name', 'email', 'domain', 'contact', 'created_at'];
+                if (!in_array($orderColumn, $allowed)) {
+                    $orderColumn = 'created_at';
+                }
+                $query->orderBy($orderColumn, $orderDir);
+            } else {
+                $query->orderBy('created_at', 'desc');
+            }
+
+            $tenants = $query->skip($start)->take($length)->get();
+
+            return response()->json([
+                'draw' => (int) $request->input('draw', 0),
+                'recordsTotal' => $recordsTotal,
+                'recordsFiltered' => $recordsFiltered,
+                'data' => $tenants,
+            ]);
+        }
+
+        // Non-AJAX: return the view as before (full collection for legacy client-side use)
         $tenants = Tenant::latest()->get();
         return view('super_admin.tenant', compact('tenants'));
     }

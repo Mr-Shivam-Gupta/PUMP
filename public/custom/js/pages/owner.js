@@ -4,81 +4,57 @@ $(document).ready(function () {
     }
 
     let tenantChoices = null;
+    let isEditMode = false;
 
+    // Initialize DataTable
+    $("#ownersTable").DataTable({
+        ordering: false,
+        searching: true,
+        paging: true,
+        info: true,
+        lengthChange: true,
+        pageLength: 10,
+        lengthMenu: [10, 25, 50, 100],
+    });
+
+    // Initialize Choicess
     function initTenantChoices() {
         const element = document.getElementById("ownerTenants");
-        if (!element) {
-            console.warn("ownerTenants element not found");
-            return false;
-        }
+        if (!element) return false;
 
-        // Destroy old instance if it exists
         if (tenantChoices) {
-            try {
-                tenantChoices.destroy();
-            } catch (e) {
-                console.warn("Error destroying Choices:", e);
-            }
+            tenantChoices.destroy();
             tenantChoices = null;
         }
 
-        // Remove any leftover Choices wrapper elements
-        const choicesWrapper = element.parentElement?.querySelector(".choices");
-        if (choicesWrapper && choicesWrapper !== element) {
-            choicesWrapper.remove();
-        }
+        tenantChoices = new Choices(element, {
+            removeItemButton: true,
+            searchPlaceholderValue: "Search tenants...",
+            placeholderValue: "Select tenants...",
+            shouldSort: false,
+            searchEnabled: true,
+        });
 
-        // Ensure element is visible and not hidden
-        if (!element.offsetParent) {
-            console.warn("ownerTenants element is not visible");
-            return false;
-        }
-
-        try {
-            // Initialize fresh instance
-            tenantChoices = new Choices(element, {
-                removeItemButton: true,
-                searchPlaceholderValue: "Search tenants...",
-                placeholder: true,
-                placeholderValue: "Select tenants...",
-                shouldSort: false,
-                searchEnabled: true,
-            });
-            return true;
-        } catch (e) {
-            console.error("Failed to initialize Choices:", e);
-            return false;
-        }
+        return true;
     }
 
+    // Load tenant list dynamically
     function loadTenants(selectedIds = []) {
-        if (!tenantChoices) {
-            console.warn("tenantChoices not initialized");
-            return;
-        }
-
+        if (!tenantChoices) return;
         $.ajax({
             url: makeUrl("super-admin/tenants/list"),
             type: "GET",
             dataType: "json",
             success: function (tenants) {
-                if (!tenantChoices) return;
+                tenantChoices.clearStore();
 
-                try {
-                    // Clear existing choices
-                    tenantChoices.clearStore();
+                const options = tenants.map((t) => ({
+                    value: String(t.id),
+                    label: `${t.name} (${t.domain ?? "-"})`,
+                    selected: selectedIds.includes(String(t.id)),
+                }));
 
-                    // Populate tenant options
-                    const choices = tenants.map((t) => ({
-                        value: String(t.id),
-                        label: `${t.name} (${t.domain ?? "-"})`,
-                        selected: selectedIds.includes(String(t.id)),
-                    }));
-
-                    tenantChoices.setChoices(choices, "value", "label", true);
-                } catch (e) {
-                    console.error("Error loading tenants:", e);
-                }
+                tenantChoices.setChoices(options, "value", "label", true);
             },
             error: function () {
                 showAlert(
@@ -90,58 +66,42 @@ $(document).ready(function () {
         });
     }
 
+    // Reset form
     function resetOwnerForm() {
         $("#ownerForm")[0].reset();
-        if (tenantChoices) {
-            try {
-                tenantChoices.clearStore();
-            } catch (e) {
-                console.warn("Error clearing choices:", e);
-            }
-        }
+        if (tenantChoices) tenantChoices.clearStore();
     }
 
-    // ✅ Modal lifecycle - wait for modal to be fully shown
+    // Modal lifecycle
     $("#ownerModal").on("shown.bs.modal", function () {
-        // Small delay to ensure DOM is fully ready
-        setTimeout(() => {
-            const initialized = initTenantChoices();
-            if (initialized) {
-                resetOwnerForm();
-                loadTenants();
-            }
-        }, 100);
+        if (!tenantChoices) initTenantChoices();
+        if (!isEditMode) {
+            resetOwnerForm();
+            loadTenants();
+        }
     });
 
     $("#ownerModal").on("hidden.bs.modal", function () {
-        // Destroy instance to prevent duplicates
+        isEditMode = false;
         if (tenantChoices) {
-            try {
-                tenantChoices.destroy();
-            } catch (e) {
-                console.warn("Error destroying Choices on modal hide:", e);
-            }
+            tenantChoices.destroy();
             tenantChoices = null;
         }
+        resetOwnerForm();
     });
 
-    // ✅ Add Owner
+    // ADD OWNER
     $("#addOwnerBtn").on("click", function () {
+        isEditMode = false;
         $("#addOwnerLabel").text("Add New Owner");
         $("#saveOwnerBtn").removeAttr("data-owner-id");
-        const modal = new bootstrap.Modal(
-            document.getElementById("ownerModal")
-        );
-        modal.show();
     });
 
-    // ✅ Edit Owner
+    // EDIT OWNER
     $(document).on("click", ".edit-owner", function () {
         const id = $(this).data("id");
-        const modal = new bootstrap.Modal(
-            document.getElementById("ownerModal")
-        );
-        modal.show();
+        isEditMode = true;
+        $("#addOwnerLabel").text("Edit Owner");
 
         $.ajax({
             url: makeUrl(`super-admin/owners/${id}/edit`),
@@ -160,12 +120,10 @@ $(document).ready(function () {
                         ? o.own_tenant_ids.map(String)
                         : [];
 
-                    // Wait for Choices to be initialized
                     setTimeout(() => {
-                        if (tenantChoices) {
-                            loadTenants(selectedIds);
-                        }
-                    }, 300);
+                        if (!tenantChoices) initTenantChoices();
+                        loadTenants(selectedIds);
+                    }, 250);
                 } else {
                     showAlert("danger", "ri-error-warning-line", res.message);
                 }
@@ -173,7 +131,7 @@ $(document).ready(function () {
         });
     });
 
-    // ✅ Save Owner
+    // SAVE OWNER
     $("#saveOwnerBtn").on("click", function (e) {
         e.preventDefault();
         const button = $(this);
@@ -209,7 +167,7 @@ $(document).ready(function () {
                         "ri-checkbox-circle-line",
                         res.message
                     );
-                    setTimeout(() => window.location.reload(), 1000);
+                    setTimeout(() => window.location.reload(), 800);
                 } else {
                     showAlert("danger", "ri-error-warning-line", res.message);
                 }
@@ -220,6 +178,66 @@ $(document).ready(function () {
                 showAlert("danger", "ri-error-warning-line", msg);
             },
             complete: () => button.prop("disabled", false),
+        });
+    });
+
+    // ✅ DELETE OWNER
+    $(document).on("click", ".delete-owner", function () {
+        const id = $(this).data("id");
+        if (!confirm("Are you sure you want to delete this owner?")) return;
+
+        $.ajax({
+            url: makeUrl(`super-admin/owners/${id}`),
+            type: "DELETE",
+            headers: {
+                "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
+            },
+            dataType: "json",
+            success: (res) => {
+                if (res.success) {
+                    showAlert(
+                        "success",
+                        "ri-checkbox-circle-line",
+                        res.message
+                    );
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    showAlert("danger", "ri-error-warning-line", res.message);
+                }
+            },
+            error: (xhr) => {
+                const msg =
+                    xhr.responseJSON?.message || "Failed to delete owner.";
+                showAlert("danger", "ri-error-warning-line", msg);
+            },
+        });
+    });
+
+    // ✅ TOGGLE STATUS
+    $(document).on("click", ".toggle-status", function () {
+        const id = $(this).data("id");
+        $.ajax({
+            url: makeUrl(`super-admin/owners/status/${id}`),
+            type: "GET",
+            dataType: "json",
+            success: (res) => {
+                if (res.success) {
+                    showAlert(
+                        "success",
+                        "ri-checkbox-circle-line",
+                        res.message
+                    );
+                    setTimeout(() => window.location.reload(), 800);
+                } else {
+                    showAlert("danger", "ri-error-warning-line", res.message);
+                }
+            },
+            error: (xhr) => {
+                const msg =
+                    xhr.responseJSON?.message ||
+                    "Failed to change status. Please try again.";
+                showAlert("danger", "ri-error-warning-line", msg);
+            },
         });
     });
 });

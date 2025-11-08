@@ -14,11 +14,11 @@ Route::prefix('super-admin')->group(function () {
         Route::get('/dashboard', [SuperAdminLoginController::class, 'dashboard'])->name('dashboard');
 
         Route::resource('tenants', SuperAdminTenantController::class)->except(['show']);
-        Route::get('tenant/status/{id}', [SuperAdminTenantController::class, 'toggleStatus'])->name('tenant.status');
+        Route::get('tenants/status/{id}', [SuperAdminTenantController::class, 'toggleStatus'])->name('tenant.status');
         Route::get('tenants/list', [SuperAdminTenantController::class, 'listTenants'])->name('tenants.list');
 
         Route::resource('owners', SuperAdminOwnerController::class)->except(['show']);
-        Route::get('owner/status/{id}', [SuperAdminOwnerController::class, 'toggleStatus'])->name('owner.status');
+        Route::get('owners/status/{id}', [SuperAdminOwnerController::class, 'toggleStatus'])->name('owner.status');
     });
 });
 Route::middleware('auth:super-admin')->name('super-admin.')->group(function () {
