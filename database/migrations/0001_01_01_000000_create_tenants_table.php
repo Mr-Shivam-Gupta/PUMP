@@ -37,6 +37,7 @@ class CreateTenantsTable extends Migration
             $table->string('db_username')->nullable();
             $table->string('db_password')->nullable();
 
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->timestamps();
             $table->json('data')->nullable();
         });

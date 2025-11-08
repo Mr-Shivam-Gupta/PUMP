@@ -11,26 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plans', function (Blueprint $table) {
+        Schema::create('users', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('tenant_id');
+            $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
+            $table->string('employee_id')->nullable();
             $table->string('name');
-            $table->integer('duration_days')->default(30);
-            $table->enum('isolation', ['shared_schema', 'separate_db'])->default('shared_schema');
-            $table->integer('max_users')->nullable();
-            $table->decimal('price', 10, 2);
+            $table->string('phone')->unique();
+            $table->string('email')->unique();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->string('password');
+            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
+            $table->rememberToken();
             $table->timestamps();
         });
-        Schema::create('subscriptions', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('plan_id')->nullable()->constrained('plans')->nullOnDelete();
-            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
-            $table->date('start_date')->nullable();
-            $table->date('end_date')->nullable();
-            $table->boolean('is_trial')->default(false);
-            $table->tinyInteger('subscription_status')->default(1)->comment('1 = active, 0 = expired, 2 = trial, 3 = canceled');
-            $table->timestamps();
-        });
-
+        
         Schema::create('shifts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();

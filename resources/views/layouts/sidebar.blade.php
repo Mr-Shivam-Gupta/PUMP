@@ -1,4 +1,4 @@
-       <div class="app-menu navbar-menu">
+<label for=""></label>       <div class="app-menu navbar-menu">
            <!-- LOGO -->
            <div class="navbar-brand-box">
                <!-- Dark Logo-->
@@ -78,6 +78,10 @@
                    </div>
                    <ul class="navbar-nav" id="navbar-nav">
                        <li class="menu-title"><span data-key="t-menu">Menu</span></li>
+                       <li class="nav-item">
+                           <a href="dashboard-analytics.html" class="nav-link" data-key="t-analytics">
+                               Plan </a>
+                       </li>
                        <li class="nav-item">
                            <a class="nav-link menu-link" href="#sidebarDashboards" data-bs-toggle="collapse"
                                role="button" aria-expanded="false" aria-controls="sidebarDashboards">

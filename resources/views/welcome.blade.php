@@ -45,6 +45,7 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(120deg, rgba(0, 0, 0, 0.8), rgba(0, 90, 180, 0.7));
+            /* background: linear-gradient(-45deg, var(--vz-primary) 50%, var(--vz-success)); */
             z-index: 1;
         }
 
@@ -242,7 +243,7 @@
 
             <div>
                 <a href="/owner/login" class="btn btn-custom">Owner Login</a>
-                <a href="/tenant/login" class="btn btn-custom">Tenant Login</a>
+                <a href="/login" class="btn btn-custom">Tenant Login</a>
             </div>
         </div>
 

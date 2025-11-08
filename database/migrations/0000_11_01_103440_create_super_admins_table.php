@@ -17,7 +17,6 @@ return new class extends Migration
             $table->string('contact')->unique();
             $table->string('email')->unique();
             $table->string('password');
-            $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->timestamps();
         });
     }

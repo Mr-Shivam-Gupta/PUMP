@@ -19,15 +19,15 @@ use Stancl\Tenancy\Middleware\InitializeTenancyByRequestData;
 */
 
 
-Route::middleware([
-    'web',
-    InitializeTenancyByRequestData::class,
-])->group(function () {
+// Route::middleware([
+//     'web',
+//     InitializeTenancyByRequestData::class,
+// ])->group(function () {
 
-    Route::get('/', function () {
-        return 'This is your multi-tenant application. The id of the current tenant is ' . tenant('id');
-    });
-});
+//     Route::get('/', function () {
+//         return 'This is your multi-tenant application. The id of the current tenant is ' . tenant('id');
+//     });
+// });
 
 Route::prefix('tenant')->group(function () {
     Route::post('/login', [TenantLoginController::class, 'login'])->name('tenant.login.submit');
