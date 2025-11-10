@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('tenant_id');
             $table->foreign('tenant_id')->references('id')->on('tenants')->cascadeOnDelete();
             $table->string('employee_id')->nullable();
+            $table->string('role');
             $table->string('name');
             $table->string('phone')->unique();
             $table->string('email')->unique();
@@ -61,6 +62,7 @@ return new class extends Migration
             $table->foreignId('pump_id')->constrained('pumps')->cascadeOnDelete();
             $table->foreignId('fuel_type_id')->constrained('fuel_types')->cascadeOnDelete();
             $table->string('nozzle_name')->comment('nozzle name or number');
+            $table->enum('nozzle_side', ['front', 'back']);
             $table->string('description')->nullable();
             $table->tinyInteger('status')->default(1)->comment('1 = active, 0 = inactive');
             $table->timestamps();
