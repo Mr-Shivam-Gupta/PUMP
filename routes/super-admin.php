@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\SuperAdminLoginController;
+use App\Http\Controllers\SuperAdmin\SubscriptionController;
 use App\Http\Controllers\SuperAdmin\SuperAdminOwnerController;
 use App\Http\Controllers\SuperAdmin\SuperAdminPlanController;
 use App\Http\Controllers\SuperAdmin\SuperAdminTenantController;
@@ -25,3 +26,11 @@ Route::middleware('auth:super-admin')->name('super-admin.')->group(function () {
     Route::get('plan', [SuperAdminPlanController::class, 'index'])->name('plan.index');
     Route::resource('plans', SuperAdminPlanController::class)->except(['create', 'show']);
 });
+
+Route::get('subscription', [SubscriptionController::class, 'index'])->name('subscription.index');
+Route::get('subscription/list', [SubscriptionController::class, 'list'])->name('subscription.list');
+
+Route::post('subscription', [SubscriptionController::class, 'store'])->name('subscription.store');
+Route::get('subscription/{id}/edit', [SubscriptionController::class, 'edit'])->name('subscription.edit');
+Route::put('subscription/{id}', [SubscriptionController::class, 'update'])->name('subscription.update');
+Route::delete('subscription/{id}', [SubscriptionController::class, 'destroy'])->name('subscription.destroy');

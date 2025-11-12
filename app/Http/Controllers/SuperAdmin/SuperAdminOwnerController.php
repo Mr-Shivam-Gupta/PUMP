@@ -43,7 +43,7 @@ class SuperAdminOwnerController extends Controller
         $validator = Validator::make($request->all(), [
             'owner_id' => 'required|string|max:255|unique:owners,owner_id',
             'owner_password' => 'required|string|min:6',
-            'own_tenant_ids' => 'nullable|array|min:1',
+            'own_tenant_ids' => 'nullable|array|min:2',
             'own_tenant_ids.*' => 'integer|exists:tenants,id',
             'status' => 'required|boolean',
         ]);
