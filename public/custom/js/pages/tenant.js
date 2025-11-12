@@ -1,11 +1,33 @@
 $(document).ready(function () {
-    // Helper: normalize URLs
+    // ------------------------------
+    // ✅ Helper: Normalize URL
+    // ------------------------------
     function makeUrl(path) {
-        const base = "";
-        return (base + "/" + path).replace(/\/+/, "/").replace(/\/{2,}/g, "/");
+        return "/" + path.replace(/^\/+/, "");
     }
 
-    // Initialize DataTable
+    // ------------------------------
+    // ✅ Helper: Show validation errors
+    // ------------------------------
+    function showValidationErrors(formSelector, errors) {
+        const form = $(formSelector);
+        form.find(".is-invalid").removeClass("is-invalid");
+        form.find(".invalid-feedback").remove();
+
+        $.each(errors, function (key, messages) {
+            const input = form.find(`[name="${key}"]`);
+            if (input.length) {
+                input.addClass("is-invalid");
+                input.after(
+                    `<div class="invalid-feedback">${messages[0]}</div>`
+                );
+            }
+        });
+    }
+
+    // ------------------------------
+    // ✅ DataTable Init
+    // ------------------------------
     $("#tenantsTable").DataTable({
         ordering: false,
         searching: true,
@@ -15,14 +37,29 @@ $(document).ready(function () {
         pageLength: 10,
         lengthMenu: [10, 25, 50, 100],
     });
-    // Reset form when Add button clicked
+
+    // ------------------------------
+    // ✅ Reset Form
+    // ------------------------------
+    function resetTenantForm() {
+        $("#tenantForm")[0].reset();
+        $("#tenantForm .is-invalid").removeClass("is-invalid");
+        $("#tenantForm .invalid-feedback").remove();
+        $("#tenantIsolation").val("");
+    }
+
+    // ------------------------------
+    // ✅ Add Tenant (Open Modal)
+    // ------------------------------
     $("#addTenantBtn").on("click", function () {
         resetTenantForm();
         $("#addTenantLabel").text("Add New Tenant");
         $("#saveTenantBtn").removeAttr("data-tenant-id");
     });
 
-    // Save (create or update)
+    // ------------------------------
+    // ✅ Save Tenant (Create or Update)
+    // ------------------------------
     $("#saveTenantBtn").on("click", function (e) {
         e.preventDefault();
         const button = $(this);
@@ -44,56 +81,56 @@ $(document).ready(function () {
         const url = tenantId
             ? makeUrl(`super-admin/tenants/${tenantId}`)
             : makeUrl("super-admin/tenants");
-
         const method = tenantId ? "PUT" : "POST";
 
         $.ajax({
-            url: url,
+            url,
             type: method,
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
             data: formData,
-            beforeSend: function () {
-                button.prop("disabled", true);
-            },
-            success: function (response) {
-                if (response.success) {
+            beforeSend: () => button.prop("disabled", true),
+            success: (res) => {
+                if (res.success) {
                     showAlert(
                         "success",
                         "ri-checkbox-circle-line",
-                        response.message
+                        res.message
                     );
-                    setTimeout(() => window.location.reload(), 1000);
+                    setTimeout(() => window.location.reload(), 800);
                 } else {
-                    showAlert(
-                        "danger",
-                        "ri-error-warning-line",
-                        response.message
-                    );
+                    showAlert("danger", "ri-error-warning-line", res.message);
                 }
             },
-            error: function (xhr) {
-                const msg =
-                    xhr.responseJSON?.message || "Failed to save tenant.";
-                showAlert("danger", "ri-error-warning-line", msg);
+            error: (xhr) => {
+                const res = xhr.responseJSON;
+                if (res?.errors) {
+                    showValidationErrors("#tenantForm", res.errors);
+                    showAlert("danger", "ri-error-warning-line", res.message);
+                } else {
+                    const msg = res?.message || "Failed to save tenant.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
-            complete: function () {
-                button.prop("disabled", false);
-            },
+            complete: () => button.prop("disabled", false),
         });
     });
 
-    // Edit Tenant
+    // ------------------------------
+    // ✅ Edit Tenant
+    // ------------------------------
     $(document).on("click", ".edit-tenant", function () {
-        const tenantId = $(this).data("id");
+        const id = $(this).data("id");
+        resetTenantForm();
+
         $.ajax({
-            url: makeUrl(`super-admin/tenants/${tenantId}/edit`),
+            url: makeUrl(`super-admin/tenants/${id}/edit`),
             type: "GET",
             dataType: "json",
-            success: function (response) {
-                if (response.success) {
-                    const t = response.data;
+            success: (res) => {
+                if (res.success) {
+                    const t = res.data;
                     $("#addTenantLabel").text(`Edit Tenant - ${t.name}`);
                     $("#tenantName").val(t.name);
                     $("#tenantEmail").val(t.email);
@@ -106,17 +143,20 @@ $(document).ready(function () {
                     $("#tenantLicense").val(t.license_number);
                     $("#saveTenantBtn").attr("data-tenant-id", t.id);
                 } else {
-                    showAlert(
-                        "danger",
-                        "ri-error-warning-line",
-                        response.message
-                    );
+                    showAlert("danger", "ri-error-warning-line", res.message);
                 }
+            },
+            error: (xhr) => {
+                const res = xhr.responseJSON;
+                const msg = res?.message || "Failed to fetch tenant details.";
+                showAlert("danger", "ri-error-warning-line", msg);
             },
         });
     });
 
-    // Delete Tenant
+    // ------------------------------
+    // ✅ Delete Tenant
+    // ------------------------------
     $(document).on("click", ".delete-tenant", function () {
         const id = $(this).data("id");
         if (!confirm("Are you sure you want to delete this tenant?")) return;
@@ -127,52 +167,52 @@ $(document).ready(function () {
             headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content"),
             },
-            success: function (response) {
-                if (response.success) {
+            success: (res) => {
+                if (res.success) {
                     showAlert(
                         "success",
                         "ri-checkbox-circle-line",
-                        response.message
+                        res.message
                     );
-                    setTimeout(() => window.location.reload(), 1000);
+                    setTimeout(() => window.location.reload(), 800);
                 } else {
-                    showAlert(
-                        "danger",
-                        "ri-error-warning-line",
-                        response.message
-                    );
+                    showAlert("danger", "ri-error-warning-line", res.message);
                 }
+            },
+            error: (xhr) => {
+                const res = xhr.responseJSON;
+                const msg = res?.message || "Failed to delete tenant.";
+                showAlert("danger", "ri-error-warning-line", msg);
             },
         });
     });
 
-    // Toggle Tenant Status
+    // ------------------------------
+    // ✅ Toggle Tenant Status
+    // ------------------------------
     $(document).on("click", ".toggle-status", function () {
         const id = $(this).data("id");
+
         $.ajax({
             url: makeUrl(`super-admin/tenants/status/${id}`),
             type: "GET",
-            success: function (response) {
-                if (response.success) {
+            success: (res) => {
+                if (res.success) {
                     showAlert(
                         "success",
                         "ri-checkbox-circle-line",
-                        response.message
+                        res.message
                     );
                     setTimeout(() => window.location.reload(), 800);
                 } else {
-                    showAlert(
-                        "danger",
-                        "ri-error-warning-line",
-                        response.message
-                    );
+                    showAlert("danger", "ri-error-warning-line", res.message);
                 }
+            },
+            error: (xhr) => {
+                const res = xhr.responseJSON;
+                const msg = res?.message || "Failed to change status.";
+                showAlert("danger", "ri-error-warning-line", msg);
             },
         });
     });
-    // Reset form
-    function resetTenantForm() {
-        $("#tenantForm")[0].reset();
-        $("#tenantIsolation").val("");
-    }
 });

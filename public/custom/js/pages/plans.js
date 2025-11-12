@@ -67,11 +67,44 @@ $(document).ready(function () {
                     );
                 }
             },
-            error: function (xhr) {
-                let errorMsg = "Failed to save plan.";
-                if (xhr.responseJSON?.message)
-                    errorMsg = xhr.responseJSON.message;
-                showAlert("danger", "ri-error-warning-line", errorMsg);
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
             complete: function () {
                 endLoader({ currentTarget: button });
@@ -115,10 +148,44 @@ $(document).ready(function () {
                     );
                 }
             },
-            error: function (xhr) {
-                const errorMsg =
-                    xhr.responseJSON?.message || "Failed to fetch plan.";
-                showAlert("danger", "ri-error-warning-line", errorMsg);
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
             complete: function () {
                 endLoader({ currentTarget: button });
@@ -155,10 +222,44 @@ $(document).ready(function () {
                     );
                 }
             },
-            error: function (xhr) {
-                const errorMsg =
-                    xhr.responseJSON?.message || "Failed to delete plan.";
-                showAlert("danger", "ri-error-warning-line", errorMsg);
+            error: (xhr) => {
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
         });
     });

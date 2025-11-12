@@ -173,9 +173,43 @@ $(document).ready(function () {
                 }
             },
             error: (xhr) => {
-                const msg =
-                    xhr.responseJSON?.message || "Failed to save owner.";
-                showAlert("danger", "ri-error-warning-line", msg);
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
             complete: () => button.prop("disabled", false),
         });
@@ -206,9 +240,43 @@ $(document).ready(function () {
                 }
             },
             error: (xhr) => {
-                const msg =
-                    xhr.responseJSON?.message || "Failed to delete owner.";
-                showAlert("danger", "ri-error-warning-line", msg);
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
         });
     });
@@ -233,10 +301,43 @@ $(document).ready(function () {
                 }
             },
             error: (xhr) => {
-                const msg =
-                    xhr.responseJSON?.message ||
-                    "Failed to change status. Please try again.";
-                showAlert("danger", "ri-error-warning-line", msg);
+                const response = xhr.responseJSON;
+
+                $("#ownerForm .is-invalid").removeClass("is-invalid");
+                $("#ownerForm .invalid-feedback").remove();
+
+                if (response && response.errors) {
+                    $.each(response.errors, function (key, messages) {
+                        const input = $(`[name="${key}"]`);
+
+                        if (input.length) {
+                            input.addClass("is-invalid");
+
+                            if (
+                                input.hasClass("form-control") &&
+                                input.attr("id") === "ownerTenants"
+                            ) {
+                                const choiceEl = input.closest(".choices");
+                                choiceEl.after(
+                                    `<div class="invalid-feedback d-block">${messages[0]}</div>`
+                                );
+                            } else {
+                                input.after(
+                                    `<div class="invalid-feedback">${messages[0]}</div>`
+                                );
+                            }
+                        }
+                    });
+
+                    showAlert(
+                        "danger",
+                        "ri-error-warning-line",
+                        response.message
+                    );
+                } else {
+                    const msg = response?.message || "Failed to save owner.";
+                    showAlert("danger", "ri-error-warning-line", msg);
+                }
             },
         });
     });

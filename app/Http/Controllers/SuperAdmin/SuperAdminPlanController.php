@@ -33,7 +33,8 @@ class SuperAdminPlanController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+                'message' => 'Validation failed. Please check the highlighted fields.',
             ], 422);
         }
 
@@ -82,7 +83,8 @@ class SuperAdminPlanController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => $validator->errors()->first(),
+                'errors' => $validator->errors(),
+                'message' => 'Validation failed. Please check the highlighted fields.',
             ], 422);
         }
 
