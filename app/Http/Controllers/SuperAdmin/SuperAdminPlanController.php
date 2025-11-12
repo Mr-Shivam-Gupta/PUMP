@@ -27,7 +27,7 @@ class SuperAdminPlanController extends Controller
             'duration_days' => 'required|integer|min:1',
             'isolation' => 'required|in:shared_schema,separate_db',
             'max_users' => 'nullable|integer|min:1',
-            'price' => 'nullable|numeric|min:0',
+            'price' => 'required|numeric|min:0',
         ]);
 
         if ($validator->fails()) {

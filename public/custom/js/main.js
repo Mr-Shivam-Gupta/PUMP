@@ -1,3 +1,56 @@
+// function showAlert(
+//     type = "primary",
+//     icon = "ri-user-smile-line",
+//     message = "Primary - Rounded label alert",
+//     duration = 5000
+// ) {
+//     const timestamp = Date.now();
+//     const alertId = `alert-${timestamp}`;
+//     const progressId = `progress-${timestamp}`;
+
+//     const alertHTML = `
+//         <div id="${alertId}" class="alert alert-${type} alert-dismissible alert-label-icon rounded-label fade show material-shadow position-relative overflow-hidden mt-2" role="alert" style="min-width: 300px;">
+//             <!-- Progress Bar at the Top -->
+//             <div id="${progressId}" class="position-absolute top-0 start-0 bg-${type}" style="height: 4px; width: 0%; transition: width ${duration}ms linear;"></div>
+
+//             <!-- Alert Content -->
+//             <i class="${icon} label-icon"></i><strong>${
+//         type.charAt(0).toUpperCase() + type.slice(1)
+//     }</strong> - ${message}
+//             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+//         </div>
+//     `;
+
+//     let container = document.getElementById("alert-container");
+//     if (!container) {
+//         container = document.createElement("div");
+//         container.id = "alert-container";
+//         container.style.position = "fixed";
+//         container.style.top = "20px";
+//         container.style.right = "20px";
+//         container.style.zIndex = "1055";
+//         container.style.maxWidth = "350px";
+//         document.body.appendChild(container);
+//     }
+
+//     container.insertAdjacentHTML("beforeend", alertHTML);
+
+//     setTimeout(() => {
+//         const progressBar = document.getElementById(progressId);
+//         if (progressBar) {
+//             progressBar.style.width = "100%";
+//         }
+//     }, 50);
+
+//     setTimeout(() => {
+//         const alert = document.getElementById(alertId);
+//         if (alert) {
+//             alert.classList.remove("show");
+//             alert.classList.add("fade");
+//             setTimeout(() => alert.remove(), 500);
+//         }
+//     }, duration);
+// }
 function showAlert(
     type = "primary",
     icon = "ri-user-smile-line",
@@ -10,13 +63,12 @@ function showAlert(
 
     const alertHTML = `
         <div id="${alertId}" class="alert alert-${type} alert-dismissible alert-label-icon rounded-label fade show material-shadow position-relative overflow-hidden mt-2" role="alert" style="min-width: 300px;">
-            <!-- Progress Bar at the Top -->
-            <div id="${progressId}" class="position-absolute top-0 start-0 bg-${type}" style="height: 4px; width: 0%; transition: width ${duration}ms linear;"></div>
-
-            <!-- Alert Content -->
-            <i class="${icon} label-icon"></i><strong>${
-        type.charAt(0).toUpperCase() + type.slice(1)
-    }</strong> - ${message}
+            <!-- Progress Bar -->
+            <div id="${progressId}" class="position-absolute top-0 start-0 bg-${type}" style="height: 4px; width: 0%;"></div>
+            <i class="${icon} label-icon"></i>
+            <strong>${
+                type.charAt(0).toUpperCase() + type.slice(1)
+            }</strong> - ${message}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     `;
@@ -35,21 +87,55 @@ function showAlert(
 
     container.insertAdjacentHTML("beforeend", alertHTML);
 
-    setTimeout(() => {
-        const progressBar = document.getElementById(progressId);
-        if (progressBar) {
-            progressBar.style.width = "100%";
-        }
-    }, 50);
+    const alertEl = document.getElementById(alertId);
+    const progressEl = document.getElementById(progressId);
 
-    setTimeout(() => {
-        const alert = document.getElementById(alertId);
-        if (alert) {
-            alert.classList.remove("show");
-            alert.classList.add("fade");
-            setTimeout(() => alert.remove(), 500);
+    let startTime = Date.now();
+    let elapsed = 0;
+    let remaining = duration;
+    let timerId = null;
+    let progressAnimationFrame = null;
+    let isPaused = false;
+
+    const closeAlert = () => {
+        if (alertEl) {
+            alertEl.classList.remove("show");
+            alertEl.classList.add("fade");
+            setTimeout(() => alertEl.remove(), 500);
         }
-    }, duration);
+    };
+
+    // Animate the progress bar manually
+    function animateProgress() {
+        if (isPaused) return;
+        elapsed = Date.now() - startTime;
+        const percent = Math.min((elapsed / duration) * 100, 100);
+        if (progressEl) progressEl.style.width = percent + "%";
+        if (elapsed < duration) {
+            progressAnimationFrame = requestAnimationFrame(animateProgress);
+        }
+    }
+
+    function startTimer() {
+        startTime = Date.now() - elapsed;
+        isPaused = false;
+        progressAnimationFrame = requestAnimationFrame(animateProgress);
+        timerId = setTimeout(closeAlert, remaining);
+    }
+
+    function pauseTimer() {
+        isPaused = true;
+        cancelAnimationFrame(progressAnimationFrame);
+        clearTimeout(timerId);
+        elapsed = Date.now() - startTime;
+        remaining = duration - elapsed;
+    }
+
+    alertEl.addEventListener("mouseenter", pauseTimer);
+    alertEl.addEventListener("mouseleave", startTimer);
+
+    // Start initially
+    startTimer();
 }
 
 function toggleSwitchText() {

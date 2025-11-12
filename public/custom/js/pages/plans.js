@@ -70,13 +70,13 @@ $(document).ready(function () {
             error: (xhr) => {
                 const response = xhr.responseJSON;
 
-                $("#ownerForm .is-invalid").removeClass("is-invalid");
-                $("#ownerForm .invalid-feedback").remove();
+                $("#planForm .is-invalid").removeClass("is-invalid");
+                $("#planForm .invalid-feedback").remove();
 
                 if (response && response.errors) {
                     $.each(response.errors, function (key, messages) {
                         const input = $(`[name="${key}"]`);
-
+                        input.next(".invalid-feedback").remove();
                         if (input.length) {
                             input.addClass("is-invalid");
 
@@ -151,13 +151,14 @@ $(document).ready(function () {
             error: (xhr) => {
                 const response = xhr.responseJSON;
 
-                $("#ownerForm .is-invalid").removeClass("is-invalid");
-                $("#ownerForm .invalid-feedback").remove();
+                $("#planForm .is-invalid").removeClass("is-invalid");
+                $("#planForm .invalid-feedback").remove();
 
                 if (response && response.errors) {
                     $.each(response.errors, function (key, messages) {
                         const input = $(`[name="${key}"]`);
 
+                        input.next(".invalid-feedback").remove();
                         if (input.length) {
                             input.addClass("is-invalid");
 
@@ -225,16 +226,16 @@ $(document).ready(function () {
             error: (xhr) => {
                 const response = xhr.responseJSON;
 
-                $("#ownerForm .is-invalid").removeClass("is-invalid");
-                $("#ownerForm .invalid-feedback").remove();
+                $("#planForm .is-invalid").removeClass("is-invalid");
+                $("#planForm .invalid-feedback").remove();
 
                 if (response && response.errors) {
                     $.each(response.errors, function (key, messages) {
                         const input = $(`[name="${key}"]`);
 
+                        input.next(".invalid-feedback").remove();
                         if (input.length) {
                             input.addClass("is-invalid");
-
                             if (
                                 input.hasClass("form-control") &&
                                 input.attr("id") === "ownerTenants"
@@ -266,7 +267,9 @@ $(document).ready(function () {
 
     // Helper to reset form
     function resetPlanForm() {
-        $("#planForm")[0].reset();
-        $("#isolation").val("");
+        const form = $("#planForm")[0];
+        if (form) form.reset();
+        $("#planForm .is-invalid").removeClass("is-invalid");
+        $("#planForm .invalid-feedback").remove();
     }
 });
