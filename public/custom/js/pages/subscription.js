@@ -25,8 +25,23 @@ $(document).ready(function () {
                     return meta.row + meta.settings._iDisplayStart + 1;
                 },
             },
-            { data: "tenant_id", defaultContent: "-" },
-            { data: "plan_id", defaultContent: "-" },
+            {
+                data: "tenant",
+                defaultContent: "-",
+                render: function (data, type, row) {
+                    if (data && data.name) {
+                        return data.name + (data.email ? `<div class="text-muted small">${data.email}</div>` : "");
+                    }
+                    return "-";
+                },
+            },
+            {
+                data: "plan",
+                defaultContent: "-",
+                render: function (data) {
+                    return data && data.name ? data.name : "-";
+                },
+            },
             {
                 data: "is_trial",
                 render: function (data) {

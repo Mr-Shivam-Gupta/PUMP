@@ -15,7 +15,7 @@ class SubscriptionController extends Controller
     }
     public function list(Request $request)
     {
-        $query = Subscription::query();
+        $query = Subscription::with(['plan:id,name', 'tenant:id,name,email']);
         if (Auth::guard('super-admin')->check()) {
         } elseif (Auth::guard('tenant')->check()) {
             $tenantId = Auth::guard('tenant')->id();
