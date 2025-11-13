@@ -78,7 +78,7 @@
             <ul class="navbar-nav" id="navbar-nav">
                 <li class="menu-title"><span data-key="t-menu">Menu</span></li>
                 <li class="nav-item">
-                    <a href="{{ route('super-admin.plan.index') }}" class="nav-link" data-key="t-analytics">
+                    <a href="{{ route('super-admin.plans.index') }}" class="nav-link" data-key="t-analytics">
                         Plan </a>
                 </li>
                 <li class="nav-item">

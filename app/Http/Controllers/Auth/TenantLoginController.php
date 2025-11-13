@@ -13,7 +13,7 @@ class TenantLoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('tenant.login'); // Blade file: resources/views/tenant/login.blade.php
+        return view('login'); // Blade file: resources/views/tenant/login.blade.php
     }
 
     /**
@@ -40,6 +40,6 @@ class TenantLoginController extends Controller
 
     public function dashboard()
     {
-        return view('home');
+        return view('app');
     }
 }

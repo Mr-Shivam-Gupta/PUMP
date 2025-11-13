@@ -44,6 +44,6 @@ class SuperAdminLoginController extends Controller
 
     public function dashboard()
     {
-        return view('home');
+        return view('app');
     }
 }
